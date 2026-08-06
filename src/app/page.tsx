@@ -7,14 +7,17 @@ export default function HomePage() {
   const [voteUrl, setVoteUrl] = useState('');
 
   useEffect(() => {
+    const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+
+    if (!isLocalhost) {
+      setVoteUrl(`${window.location.origin}/vote`);
+      return;
+    }
+
     fetch('/api/server-info')
       .then((res) => res.json())
       .then((data) => {
-        if (data.url) {
-          setVoteUrl(`${data.url}/vote`);
-        } else {
-          setVoteUrl(`http://${data.ip}:${data.port}/vote`);
-        }
+        setVoteUrl(`http://${data.ip}:${data.port}/vote`);
       })
       .catch(() => {
         setVoteUrl(`${window.location.origin}/vote`);
