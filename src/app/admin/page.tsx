@@ -91,8 +91,8 @@ export default function AdminPage() {
     getSocket().emit('admin:remove-teacher', { teacherId: id });
   };
 
-  const openVote = () => {
-    getSocket().emit('admin:open-vote', { durationMinutes: duration });
+  const openVote = (keepScores = false) => {
+    getSocket().emit('admin:open-vote', { durationMinutes: duration, keepScores });
   };
 
   const closeVote = () => {
@@ -233,7 +233,7 @@ export default function AdminPage() {
               />
             </div>
             <button
-              onClick={openVote}
+              onClick={() => openVote()}
               className="px-8 py-3 bg-green-600 hover:bg-green-700 rounded-lg font-bold text-lg transition"
             >
               เปิดโหวต
@@ -257,6 +257,25 @@ export default function AdminPage() {
         {state.status === 'closed' && (
           <div className="space-y-3">
             <p className="text-yellow-400">โหวตปิดแล้ว — คะแนนยังไม่ถูกเปิดเผย</p>
+            <div className="flex flex-col sm:flex-row gap-4 items-end">
+              <div>
+                <label className="block text-sm text-gray-400 mb-1">จำกัดเวลา (นาที)</label>
+                <input
+                  type="number"
+                  min={1}
+                  max={30}
+                  value={duration}
+                  onChange={(e) => setDuration(Number(e.target.value))}
+                  className="w-24 px-3 py-2 bg-[#2a2a5e] rounded-lg text-white outline-none focus:ring-2 focus:ring-green-500"
+                />
+              </div>
+              <button
+                onClick={() => openVote(true)}
+                className="px-8 py-3 bg-green-600 hover:bg-green-700 rounded-lg font-bold text-lg transition"
+              >
+                เปิดโหวตอีกรอบ
+              </button>
+            </div>
             <button
               onClick={finalize}
               className="px-8 py-3 bg-purple-600 hover:bg-purple-700 rounded-lg font-bold text-lg transition"

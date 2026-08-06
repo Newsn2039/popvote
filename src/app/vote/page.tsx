@@ -129,10 +129,9 @@ export default function VotePage() {
             setSelectedTeacher(null);
             setTapCount(0);
           }}
-          className="text-sm text-gray-500 underline mt-1"
-          disabled={isVoting}
+          className="text-sm text-gray-400 underline mt-1 active:text-white"
         >
-          {isVoting ? '' : 'เปลี่ยนครู'}
+          เปลี่ยนครู
         </button>
       </div>
 

@@ -25,13 +25,15 @@ class Store {
     this.votes.delete(id);
   }
 
-  openVoting(durationMinutes: number, onTimeUp: () => void): void {
+  openVoting(durationMinutes: number, onTimeUp: () => void, keepScores = false): void {
     this.durationMinutes = durationMinutes;
     this.status = 'voting';
     this.votingEndsAt = Date.now() + durationMinutes * 60 * 1000;
 
-    for (const t of this.teachers) {
-      this.votes.set(t.id, 0);
+    if (!keepScores) {
+      for (const t of this.teachers) {
+        this.votes.set(t.id, 0);
+      }
     }
 
     this.votingTimer = setTimeout(() => {

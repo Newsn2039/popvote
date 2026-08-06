@@ -68,12 +68,12 @@ export function setupSocketHandlers(io: Server) {
       broadcastState();
     });
 
-    socket.on('admin:open-vote', (data: { durationMinutes: number }) => {
+    socket.on('admin:open-vote', (data: { durationMinutes: number; keepScores?: boolean }) => {
       store.openVoting(data.durationMinutes, () => {
         stopBatchBroadcast();
         io.emit('vote-closed');
         broadcastState();
-      });
+      }, data.keepScores || false);
       startBatchBroadcast();
       io.emit('vote-opened', { endsAt: store.votingEndsAt });
       broadcastState();
