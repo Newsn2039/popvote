@@ -116,50 +116,50 @@ export default function AdminPage() {
   };
 
   const statusColor: Record<string, string> = {
-    idle: 'bg-gray-600',
-    waiting: 'bg-yellow-600',
-    voting: 'bg-green-600',
-    closed: 'bg-orange-600',
-    finalized: 'bg-purple-600',
+    idle: 'bg-gray-500',
+    waiting: 'bg-yellow-500',
+    voting: 'bg-green-500',
+    closed: 'bg-orange-500',
+    finalized: 'bg-purple-500',
   };
 
   return (
-    <div className="min-h-screen bg-[#0f0f23] p-4 md:p-8 max-w-4xl mx-auto">
-      <h1 className="text-3xl font-bold text-center mb-2 text-yellow-400">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4 md:p-8 max-w-4xl mx-auto">
+      <h1 className="text-3xl font-bold text-center mb-2 text-indigo-700">
         PopVote Admin
       </h1>
-      <p className="text-center text-gray-400 mb-6">จัดการการโหวตแต่งกายครูวันวิทยาศาสตร์</p>
+      <p className="text-center text-gray-500 mb-6">จัดการการโหวตแต่งกายครูวันวิทยาศาสตร์</p>
 
       {/* Status Bar */}
-      <div className="bg-[#1a1a3e] rounded-xl p-4 mb-6 flex flex-wrap gap-4 items-center justify-between">
+      <div className="bg-white rounded-xl p-4 mb-6 flex flex-wrap gap-4 items-center justify-between shadow-md">
         <div className="flex items-center gap-3">
           <span className={`px-3 py-1 rounded-full text-sm font-medium text-white ${statusColor[state.status]}`}>
             {statusLabel[state.status]}
           </span>
           {countdown && (
-            <span className="text-2xl font-mono text-yellow-400">{countdown}</span>
+            <span className="text-2xl font-mono text-indigo-600">{countdown}</span>
           )}
         </div>
-        <div className="text-gray-300">
-          ผู้เชื่อมต่อ: <span className="text-green-400 font-bold">{connectedCount}</span> คน
+        <div className="text-gray-600">
+          ผู้เชื่อมต่อ: <span className="text-green-600 font-bold">{connectedCount}</span> คน
         </div>
       </div>
 
       {/* Add Teacher */}
       {(state.status === 'idle' || state.status === 'finalized') && (
-        <div className="bg-[#1a1a3e] rounded-xl p-6 mb-6">
-          <h2 className="text-xl font-semibold mb-4 text-blue-300">เพิ่มครูเข้าแข่งขัน</h2>
+        <div className="bg-white rounded-xl p-6 mb-6 shadow-md">
+          <h2 className="text-xl font-semibold mb-4 text-indigo-600">เพิ่มครูเข้าแข่งขัน</h2>
           <div className="flex flex-col md:flex-row gap-4">
             <input
               type="text"
               placeholder="ชื่อครู"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="flex-1 px-4 py-3 bg-[#2a2a5e] rounded-lg text-white placeholder-gray-500 outline-none focus:ring-2 focus:ring-blue-500"
+              className="flex-1 px-4 py-3 bg-gray-100 rounded-lg text-gray-800 placeholder-gray-400 outline-none focus:ring-2 focus:ring-indigo-400 border border-gray-200"
               onKeyDown={(e) => e.key === 'Enter' && addTeacher()}
             />
             <div className="flex gap-2 items-center">
-              <label className="px-4 py-3 bg-[#2a2a5e] rounded-lg cursor-pointer hover:bg-[#3a3a6e] transition text-gray-300">
+              <label className="px-4 py-3 bg-gray-100 rounded-lg cursor-pointer hover:bg-gray-200 transition text-gray-600 border border-gray-200">
                 {imagePreview ? 'เปลี่ยนรูป' : 'เลือกรูป'}
                 <input
                   ref={fileRef}
@@ -176,7 +176,7 @@ export default function AdminPage() {
             <button
               onClick={addTeacher}
               disabled={!name.trim()}
-              className="px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:opacity-40 rounded-lg font-semibold transition"
+              className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-40 rounded-lg font-semibold transition text-white"
             >
               เพิ่ม
             </button>
@@ -185,26 +185,26 @@ export default function AdminPage() {
       )}
 
       {/* Teacher List */}
-      <div className="bg-[#1a1a3e] rounded-xl p-6 mb-6">
-        <h2 className="text-xl font-semibold mb-4 text-blue-300">
+      <div className="bg-white rounded-xl p-6 mb-6 shadow-md">
+        <h2 className="text-xl font-semibold mb-4 text-indigo-600">
           ครูที่เข้าแข่งขัน ({state.teachers.length})
         </h2>
         {state.teachers.length === 0 ? (
-          <p className="text-gray-500 text-center py-8">ยังไม่มีครู — เพิ่มครูด้านบน</p>
+          <p className="text-gray-400 text-center py-8">ยังไม่มีครู — เพิ่มครูด้านบน</p>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {state.teachers.map((t: Teacher) => (
-              <div key={t.id} className="bg-[#2a2a5e] rounded-lg p-3 text-center relative group">
+              <div key={t.id} className="bg-indigo-50 rounded-lg p-3 text-center relative group border border-indigo-100">
                 <img
                   src={t.image}
                   alt={t.name}
-                  className="w-20 h-20 rounded-full mx-auto mb-2 object-cover border-2 border-blue-500"
+                  className="w-20 h-20 rounded-full mx-auto mb-2 object-cover border-2 border-indigo-400"
                 />
-                <p className="font-medium text-sm">{t.name}</p>
+                <p className="font-medium text-sm text-gray-700">{t.name}</p>
                 {(state.status === 'idle' || state.status === 'finalized') && (
                   <button
                     onClick={() => removeTeacher(t.id)}
-                    className="absolute top-1 right-1 w-6 h-6 rounded-full bg-red-600 hover:bg-red-700 text-xs opacity-0 group-hover:opacity-100 transition"
+                    className="absolute top-1 right-1 w-6 h-6 rounded-full bg-red-500 hover:bg-red-600 text-white text-xs opacity-0 group-hover:opacity-100 transition"
                   >
                     ✕
                   </button>
@@ -216,25 +216,25 @@ export default function AdminPage() {
       </div>
 
       {/* Vote Controls */}
-      <div className="bg-[#1a1a3e] rounded-xl p-6">
-        <h2 className="text-xl font-semibold mb-4 text-blue-300">ควบคุมการโหวต</h2>
+      <div className="bg-white rounded-xl p-6 shadow-md">
+        <h2 className="text-xl font-semibold mb-4 text-indigo-600">ควบคุมการโหวต</h2>
 
         {state.status === 'idle' && state.teachers.length >= 2 && (
           <div className="flex flex-col sm:flex-row gap-4 items-end">
             <div>
-              <label className="block text-sm text-gray-400 mb-1">จำกัดเวลา (นาที)</label>
+              <label className="block text-sm text-gray-500 mb-1">จำกัดเวลา (นาที)</label>
               <input
                 type="number"
                 min={1}
                 max={30}
                 value={duration}
                 onChange={(e) => setDuration(Number(e.target.value))}
-                className="w-24 px-3 py-2 bg-[#2a2a5e] rounded-lg text-white outline-none focus:ring-2 focus:ring-green-500"
+                className="w-24 px-3 py-2 bg-gray-100 rounded-lg text-gray-800 outline-none focus:ring-2 focus:ring-green-400 border border-gray-200"
               />
             </div>
             <button
               onClick={() => openVote()}
-              className="px-8 py-3 bg-green-600 hover:bg-green-700 rounded-lg font-bold text-lg transition"
+              className="px-8 py-3 bg-green-500 hover:bg-green-600 rounded-lg font-bold text-lg transition text-white"
             >
               เปิดโหวต
             </button>
@@ -242,13 +242,13 @@ export default function AdminPage() {
         )}
 
         {state.status === 'idle' && state.teachers.length < 2 && (
-          <p className="text-gray-500">ต้องมีครูอย่างน้อย 2 คนจึงจะเปิดโหวตได้</p>
+          <p className="text-gray-400">ต้องมีครูอย่างน้อย 2 คนจึงจะเปิดโหวตได้</p>
         )}
 
         {state.status === 'voting' && (
           <button
             onClick={closeVote}
-            className="px-8 py-3 bg-orange-600 hover:bg-orange-700 rounded-lg font-bold text-lg transition"
+            className="px-8 py-3 bg-orange-500 hover:bg-orange-600 rounded-lg font-bold text-lg transition text-white"
           >
             ปิดโหวต
           </button>
@@ -256,29 +256,29 @@ export default function AdminPage() {
 
         {state.status === 'closed' && (
           <div className="space-y-3">
-            <p className="text-yellow-400">โหวตปิดแล้ว — คะแนนยังไม่ถูกเปิดเผย</p>
+            <p className="text-orange-600 font-medium">โหวตปิดแล้ว — คะแนนยังไม่ถูกเปิดเผย</p>
             <div className="flex flex-col sm:flex-row gap-4 items-end">
               <div>
-                <label className="block text-sm text-gray-400 mb-1">จำกัดเวลา (นาที)</label>
+                <label className="block text-sm text-gray-500 mb-1">จำกัดเวลา (นาที)</label>
                 <input
                   type="number"
                   min={1}
                   max={30}
                   value={duration}
                   onChange={(e) => setDuration(Number(e.target.value))}
-                  className="w-24 px-3 py-2 bg-[#2a2a5e] rounded-lg text-white outline-none focus:ring-2 focus:ring-green-500"
+                  className="w-24 px-3 py-2 bg-gray-100 rounded-lg text-gray-800 outline-none focus:ring-2 focus:ring-green-400 border border-gray-200"
                 />
               </div>
               <button
                 onClick={() => openVote(true)}
-                className="px-8 py-3 bg-green-600 hover:bg-green-700 rounded-lg font-bold text-lg transition"
+                className="px-8 py-3 bg-green-500 hover:bg-green-600 rounded-lg font-bold text-lg transition text-white"
               >
                 เปิดโหวตอีกรอบ
               </button>
             </div>
             <button
               onClick={finalize}
-              className="px-8 py-3 bg-purple-600 hover:bg-purple-700 rounded-lg font-bold text-lg transition"
+              className="px-8 py-3 bg-purple-500 hover:bg-purple-600 rounded-lg font-bold text-lg transition text-white"
             >
               สิ้นสุดการโหวตและรวมคะแนน
             </button>
@@ -287,10 +287,10 @@ export default function AdminPage() {
 
         {state.status === 'finalized' && (
           <div className="space-y-3">
-            <p className="text-green-400">แสดงผลคะแนนบนแดชบอร์ดแล้ว</p>
+            <p className="text-green-600 font-medium">แสดงผลคะแนนบนแดชบอร์ดแล้ว</p>
             <button
               onClick={reset}
-              className="px-8 py-3 bg-gray-600 hover:bg-gray-700 rounded-lg font-bold text-lg transition"
+              className="px-8 py-3 bg-gray-500 hover:bg-gray-600 rounded-lg font-bold text-lg transition text-white"
             >
               รีเซ็ต (เริ่มรอบใหม่)
             </button>

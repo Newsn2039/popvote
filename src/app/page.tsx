@@ -25,11 +25,11 @@ export default function HomePage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#0f0f23] flex flex-col items-center justify-center p-8">
-      <h1 className="text-5xl md:text-7xl font-bold text-yellow-400 mb-4 text-center">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex flex-col items-center justify-center p-8">
+      <h1 className="text-5xl md:text-7xl font-bold text-indigo-700 mb-4 text-center">
         PopVote
       </h1>
-      <p className="text-xl md:text-2xl text-gray-300 mb-2 text-center">
+      <p className="text-xl md:text-2xl text-gray-700 mb-2 text-center">
         โหวตยอดนิยมแต่งกายครูวันวิทยาศาสตร์
       </p>
       <p className="text-lg text-gray-500 mb-8 text-center">
@@ -37,7 +37,7 @@ export default function HomePage() {
       </p>
 
       {voteUrl && (
-        <div className="bg-white p-6 rounded-2xl shadow-2xl shadow-yellow-500/20">
+        <div className="bg-white p-6 rounded-2xl shadow-xl shadow-indigo-200">
           <QRCodeSVG
             value={voteUrl}
             size={280}
@@ -48,14 +48,14 @@ export default function HomePage() {
       )}
 
       <p className="mt-6 text-gray-500 text-sm">
-        หรือเข้าที่: <span className="text-yellow-400 font-mono">{voteUrl}</span>
+        หรือเข้าที่: <span className="text-indigo-600 font-mono">{voteUrl}</span>
       </p>
 
-      <div className="mt-12 flex gap-4 text-sm text-gray-600">
-        <a href="/admin" className="hover:text-gray-400 transition underline">
+      <div className="mt-12 flex gap-4 text-sm text-gray-500">
+        <a href="/admin" className="hover:text-indigo-600 transition underline">
           Admin
         </a>
-        <a href="/dashboard" className="hover:text-gray-400 transition underline">
+        <a href="/dashboard" className="hover:text-indigo-600 transition underline">
           Dashboard
         </a>
       </div>

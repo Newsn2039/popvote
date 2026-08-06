@@ -71,81 +71,76 @@ export default function VotePage() {
 
   if (!state) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#0f0f23]">
-        <div className="text-xl text-gray-400">กำลังเชื่อมต่อ...</div>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
+        <div className="text-xl text-gray-500">กำลังเชื่อมต่อ...</div>
       </div>
     );
   }
 
-  // Step 1: Select teacher
   if (!selectedTeacher) {
     return (
-      <div className="min-h-screen bg-[#0f0f23] p-4 flex flex-col">
-        <h1 className="text-2xl font-bold text-center text-yellow-400 mb-2">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4 flex flex-col">
+        <h1 className="text-2xl font-bold text-center text-indigo-700 mb-2">
           PopVote
         </h1>
-        <p className="text-center text-gray-400 mb-6">เลือกครูที่คุณชอบ</p>
+        <p className="text-center text-gray-500 mb-6">เลือกครูที่คุณชอบ</p>
 
         <div className="grid grid-cols-2 gap-4 max-w-md mx-auto w-full">
           {state.teachers.map((t: Teacher) => (
             <button
               key={t.id}
               onClick={() => setSelectedTeacher(t)}
-              className="bg-[#1a1a3e] rounded-xl p-4 flex flex-col items-center gap-3 active:scale-95 transition-transform hover:bg-[#2a2a5e]"
+              className="bg-white rounded-xl p-4 flex flex-col items-center gap-3 active:scale-95 transition-transform hover:bg-indigo-50 shadow-md border border-indigo-100"
             >
               <img
                 src={t.image}
                 alt={t.name}
-                className="w-24 h-24 rounded-full object-cover border-3 border-blue-500"
+                className="w-24 h-24 rounded-full object-cover border-3 border-indigo-400"
               />
-              <span className="font-semibold text-lg">{t.name}</span>
+              <span className="font-semibold text-lg text-gray-700">{t.name}</span>
             </button>
           ))}
         </div>
 
         {state.teachers.length === 0 && (
-          <p className="text-center text-gray-500 mt-12">รอแอดมินเพิ่มครู...</p>
+          <p className="text-center text-gray-400 mt-12">รอแอดมินเพิ่มครู...</p>
         )}
       </div>
     );
   }
 
-  // Step 2: Waiting or Voting
   const isVoting = state.status === 'voting';
   const isClosed = state.status === 'closed' || state.status === 'finalized';
 
   return (
-    <div className="min-h-screen bg-[#0f0f23] flex flex-col items-center justify-center p-4 select-none">
-      {/* Teacher info */}
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex flex-col items-center justify-center p-4 select-none">
       <div className="text-center mb-6">
         <img
           src={selectedTeacher.image}
           alt={selectedTeacher.name}
-          className="w-20 h-20 rounded-full object-cover mx-auto border-3 border-yellow-400 mb-2"
+          className="w-20 h-20 rounded-full object-cover mx-auto border-3 border-indigo-500 mb-2"
         />
-        <p className="text-lg font-semibold text-yellow-400">{selectedTeacher.name}</p>
+        <p className="text-lg font-semibold text-indigo-700">{selectedTeacher.name}</p>
         <button
           onClick={() => {
             setSelectedTeacher(null);
             setTapCount(0);
           }}
-          className="text-sm text-gray-400 underline mt-1 active:text-white"
+          className="text-sm text-gray-400 underline mt-1 active:text-indigo-600"
         >
           เปลี่ยนครู
         </button>
       </div>
 
-      {/* Countdown */}
       {countdown && (
-        <div className="text-4xl font-mono text-yellow-400 mb-4">{countdown}</div>
+        <div className="text-4xl font-mono text-indigo-600 mb-4">{countdown}</div>
       )}
 
-      {/* Tap Button */}
       <div className="relative mb-6">
         {showRing && (
           <div
             key={ringKey.current}
-            className="absolute inset-0 rounded-full border-4 border-yellow-400 animate-pulse-ring pointer-events-none"
+            className="absolute inset-0 rounded-full border-4 border-indigo-400 animate-pulse-ring pointer-events-none"
           />
         )}
         <button
@@ -159,8 +154,8 @@ export default function VotePage() {
             flex items-center justify-center
             transition-all duration-100 touch-manipulation
             ${isVoting
-              ? `bg-gradient-to-br from-yellow-400 to-orange-500 text-black shadow-lg shadow-yellow-500/30 active:shadow-inner cursor-pointer ${isPopping ? 'animate-pop' : ''}`
-              : 'bg-gray-700 text-gray-500 cursor-not-allowed'
+              ? `bg-gradient-to-br from-indigo-400 to-purple-500 text-white shadow-lg shadow-indigo-300/50 active:shadow-inner cursor-pointer ${isPopping ? 'animate-pop' : ''}`
+              : 'bg-gray-300 text-gray-400 cursor-not-allowed'
             }
           `}
           style={{ WebkitTapHighlightColor: 'transparent', userSelect: 'none' }}
@@ -169,21 +164,20 @@ export default function VotePage() {
         </button>
       </div>
 
-      {/* Status messages */}
       {!isVoting && !isClosed && (
-        <p className="text-xl text-gray-400 text-center">
+        <p className="text-xl text-gray-500 text-center">
           รอแอดมินเปิดโหวต...
         </p>
       )}
 
       {isVoting && (
-        <p className="text-lg text-green-400 font-semibold">
+        <p className="text-lg text-indigo-600 font-semibold">
           กดเร็วๆ เพื่อช่วยครู {selectedTeacher.name}!
         </p>
       )}
 
       {isClosed && (
-        <p className="text-xl text-purple-400 text-center">
+        <p className="text-xl text-purple-600 text-center">
           การโหวตสิ้นสุดแล้ว!
         </p>
       )}

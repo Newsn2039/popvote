@@ -5,29 +5,29 @@ import { getSocket } from '@/lib/socket';
 import { GameState, Teacher, RaceUpdate, FinalResults, VoteResult } from '@/lib/types';
 
 const LANE_COLORS = [
-  'from-red-500 to-red-700',
-  'from-blue-500 to-blue-700',
-  'from-green-500 to-green-700',
-  'from-yellow-500 to-yellow-700',
-  'from-purple-500 to-purple-700',
-  'from-pink-500 to-pink-700',
-  'from-cyan-500 to-cyan-700',
-  'from-orange-500 to-orange-700',
-  'from-teal-500 to-teal-700',
-  'from-indigo-500 to-indigo-700',
+  'from-red-400 to-red-600',
+  'from-blue-400 to-blue-600',
+  'from-green-400 to-green-600',
+  'from-yellow-400 to-yellow-600',
+  'from-purple-400 to-purple-600',
+  'from-pink-400 to-pink-600',
+  'from-cyan-400 to-cyan-600',
+  'from-orange-400 to-orange-600',
+  'from-teal-400 to-teal-600',
+  'from-indigo-400 to-indigo-600',
 ];
 
 const LANE_BG = [
-  'bg-red-500/10',
-  'bg-blue-500/10',
-  'bg-green-500/10',
-  'bg-yellow-500/10',
-  'bg-purple-500/10',
-  'bg-pink-500/10',
-  'bg-cyan-500/10',
-  'bg-orange-500/10',
-  'bg-teal-500/10',
-  'bg-indigo-500/10',
+  'bg-red-100',
+  'bg-blue-100',
+  'bg-green-100',
+  'bg-yellow-100',
+  'bg-purple-100',
+  'bg-pink-100',
+  'bg-cyan-100',
+  'bg-orange-100',
+  'bg-teal-100',
+  'bg-indigo-100',
 ];
 
 export default function DashboardPage() {
@@ -93,19 +93,18 @@ export default function DashboardPage() {
 
   if (!state) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#0f0f23]">
-        <div className="text-2xl text-gray-400">กำลังเชื่อมต่อ...</div>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
+        <div className="text-2xl text-gray-500">กำลังเชื่อมต่อ...</div>
       </div>
     );
   }
 
-  // Idle state
   if (state.status === 'idle' && !results) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-[#0f0f23]">
-        <h1 className="text-5xl font-bold text-yellow-400 mb-4">PopVote</h1>
-        <p className="text-2xl text-gray-400">โหวตยอดนิยมแต่งกายครูวันวิทยาศาสตร์</p>
-        <p className="text-lg text-gray-600 mt-4">รอแอดมินเปิดการโหวต...</p>
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
+        <h1 className="text-5xl font-bold text-indigo-700 mb-4">PopVote</h1>
+        <p className="text-2xl text-gray-600">โหวตยอดนิยมแต่งกายครูวันวิทยาศาสตร์</p>
+        <p className="text-lg text-gray-400 mt-4">รอแอดมินเปิดการโหวต...</p>
       </div>
     );
   }
@@ -113,7 +112,7 @@ export default function DashboardPage() {
   const teachers = state.teachers;
 
   return (
-    <div className="min-h-screen bg-[#0f0f23] p-6 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-6 flex flex-col">
       {/* Confetti */}
       {showConfetti && (
         <div ref={confettiRef} className="fixed inset-0 pointer-events-none z-50 overflow-hidden">
@@ -134,47 +133,46 @@ export default function DashboardPage() {
 
       {/* Header */}
       <div className="text-center mb-6">
-        <h1 className="text-4xl font-bold text-yellow-400">
+        <h1 className="text-4xl font-bold text-indigo-700">
           {results ? '🏆 ผลการโหวต 🏆' : 'PopVote — วิ่งแข่ง!'}
         </h1>
         {countdown && (
-          <div className="text-6xl font-mono text-yellow-400 mt-2">{countdown}</div>
+          <div className="text-6xl font-mono text-indigo-600 mt-2">{countdown}</div>
         )}
         {state.status === 'closed' && !results && (
-          <p className="text-2xl text-orange-400 mt-2">ปิดโหวตแล้ว — รอเปิดเผยคะแนน...</p>
+          <p className="text-2xl text-orange-500 mt-2">ปิดโหวตแล้ว — รอเปิดเผยคะแนน...</p>
         )}
       </div>
 
       {/* Racing Lanes or Results */}
       <div className="flex-1 flex flex-col justify-center gap-3 max-w-6xl mx-auto w-full">
         {results ? (
-          // Final Results
           results.rankings.map((r: VoteResult, idx: number) => (
             <div
               key={r.teacher.id}
               className="flex items-center gap-4 animate-slide-right"
               style={{ animationDelay: `${idx * 0.15}s`, opacity: 0 }}
             >
-              <div className="text-4xl font-bold text-yellow-400 w-12 text-right">
+              <div className="text-4xl font-bold w-12 text-right">
                 {idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `${idx + 1}.`}
               </div>
               <img
                 src={r.teacher.image}
                 alt={r.teacher.name}
                 className={`w-16 h-16 rounded-full object-cover border-3 ${
-                  idx === 0 ? 'border-yellow-400 w-20 h-20' : idx === 1 ? 'border-gray-300' : idx === 2 ? 'border-orange-600' : 'border-gray-600'
+                  idx === 0 ? 'border-yellow-400 w-20 h-20' : idx === 1 ? 'border-gray-400' : idx === 2 ? 'border-orange-400' : 'border-gray-300'
                 }`}
               />
               <div className="flex-1">
                 <div className="flex items-baseline gap-3">
-                  <span className={`text-2xl font-bold ${idx === 0 ? 'text-yellow-400 text-3xl' : ''}`}>
+                  <span className={`text-2xl font-bold text-gray-800 ${idx === 0 ? 'text-3xl text-indigo-700' : ''}`}>
                     {r.teacher.name}
                   </span>
-                  <span className="text-xl text-gray-400">
+                  <span className="text-xl text-gray-500">
                     {r.votes.toLocaleString()} คะแนน
                   </span>
                 </div>
-                <div className="mt-1 h-3 bg-[#1a1a3e] rounded-full overflow-hidden">
+                <div className="mt-1 h-3 bg-gray-200 rounded-full overflow-hidden">
                   <div
                     className={`h-full bg-gradient-to-r ${LANE_COLORS[idx % LANE_COLORS.length]} rounded-full transition-all duration-1000`}
                     style={{
@@ -186,36 +184,29 @@ export default function DashboardPage() {
             </div>
           ))
         ) : (
-          // Racing Lanes
           teachers.map((t: Teacher, idx: number) => {
             const progress = positions.get(t.id) || 0;
             return (
-              <div key={t.id} className={`relative rounded-xl overflow-hidden ${LANE_BG[idx % LANE_BG.length]}`}>
-                {/* Lane background */}
+              <div key={t.id} className={`relative rounded-xl overflow-hidden ${LANE_BG[idx % LANE_BG.length]} border border-white/50`}>
                 <div className="h-20 relative">
-                  {/* Dashed lane line */}
                   <div className="absolute inset-0 flex items-center px-4">
-                    <div className="w-full border-t-2 border-dashed border-white/10" />
+                    <div className="w-full border-t-2 border-dashed border-gray-300/50" />
                   </div>
 
-                  {/* Finish line */}
                   <div className="absolute right-0 top-0 bottom-0 w-2">
-                    <div className="h-full w-full bg-gradient-to-b from-white/30 via-black/30 to-white/30"
+                    <div className="h-full w-full bg-gradient-to-b from-gray-400/40 via-white/40 to-gray-400/40"
                       style={{ backgroundSize: '100% 8px' }} />
                   </div>
 
-                  {/* Teacher name label */}
-                  <div className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40 font-bold text-lg">
+                  <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-lg">
                     {t.name}
                   </div>
 
-                  {/* Progress bar */}
                   <div
-                    className={`absolute left-0 top-0 bottom-0 bg-gradient-to-r ${LANE_COLORS[idx % LANE_COLORS.length]} opacity-30 transition-all duration-200 ease-out`}
+                    className={`absolute left-0 top-0 bottom-0 bg-gradient-to-r ${LANE_COLORS[idx % LANE_COLORS.length]} opacity-20 transition-all duration-200 ease-out`}
                     style={{ width: `${progress}%` }}
                   />
 
-                  {/* Teacher avatar (the racer head) */}
                   <div
                     className="absolute top-1/2 -translate-y-1/2 transition-all duration-200 ease-out"
                     style={{ left: `${Math.max(progress, 2)}%`, transform: `translateX(-50%) translateY(-50%)` }}
