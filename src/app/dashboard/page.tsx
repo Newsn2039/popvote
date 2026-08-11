@@ -102,7 +102,7 @@ export default function DashboardPage() {
   if (state.status === 'idle' && !results) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
-        <h1 className="text-5xl font-bold text-indigo-700 mb-4">PopVote</h1>
+        <h1 className="text-5xl font-bold text-indigo-700 mb-4">PopularVote</h1>
         <p className="text-2xl text-gray-600">โหวตยอดนิยมแต่งกายครูวันวิทยาศาสตร์</p>
         <p className="text-lg text-gray-400 mt-4">รอแอดมินเปิดการโหวต...</p>
       </div>
@@ -134,7 +134,7 @@ export default function DashboardPage() {
       {/* Header */}
       <div className="text-center mb-6">
         <h1 className="text-4xl font-bold text-indigo-700">
-          {results ? '🏆 ผลการโหวต 🏆' : 'PopVote — วิ่งแข่ง!'}
+          {results ? '🏆 ผลการโหวต 🏆' : 'PopularVote — วิ่งแข่ง!'}
         </h1>
         {countdown && (
           <div className="text-6xl font-mono text-indigo-600 mt-2">{countdown}</div>
@@ -156,13 +156,21 @@ export default function DashboardPage() {
               <div className="text-4xl font-bold w-12 text-right">
                 {idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `${idx + 1}.`}
               </div>
-              <img
-                src={r.teacher.image}
-                alt={r.teacher.name}
-                className={`w-16 h-16 rounded-full object-cover border-3 ${
-                  idx === 0 ? 'border-yellow-400 w-20 h-20' : idx === 1 ? 'border-gray-400' : idx === 2 ? 'border-orange-400' : 'border-gray-300'
-                }`}
-              />
+              {r.teacher.image ? (
+                <img
+                  src={r.teacher.image}
+                  alt={r.teacher.name}
+                  className={`w-16 h-16 rounded-full object-cover border-3 ${
+                    idx === 0 ? 'border-yellow-400 w-20 h-20' : idx === 1 ? 'border-gray-400' : idx === 2 ? 'border-orange-400' : 'border-gray-300'
+                  }`}
+                />
+              ) : (
+                <div className={`w-16 h-16 rounded-full bg-indigo-200 flex items-center justify-center text-2xl border-3 ${
+                  idx === 0 ? 'border-yellow-400 w-20 h-20' : 'border-gray-300'
+                }`}>
+                  {r.teacher.name.charAt(0)}
+                </div>
+              )}
               <div className="flex-1">
                 <div className="flex items-baseline gap-3">
                   <span className={`text-2xl font-bold text-gray-800 ${idx === 0 ? 'text-3xl text-indigo-700' : ''}`}>
@@ -212,11 +220,17 @@ export default function DashboardPage() {
                     style={{ left: `${Math.max(progress, 2)}%`, transform: `translateX(-50%) translateY(-50%)` }}
                   >
                     <div className="relative">
-                      <img
-                        src={t.image}
-                        alt={t.name}
-                        className="w-14 h-14 rounded-full object-cover border-3 border-white shadow-lg"
-                      />
+                      {t.image ? (
+                        <img
+                          src={t.image}
+                          alt={t.name}
+                          className="w-14 h-14 rounded-full object-cover border-3 border-white shadow-lg"
+                        />
+                      ) : (
+                        <div className="w-14 h-14 rounded-full bg-indigo-200 flex items-center justify-center text-xl font-bold border-3 border-white shadow-lg">
+                          {t.name.charAt(0)}
+                        </div>
+                      )}
                       {state.status === 'voting' && progress > 5 && (
                         <div className="absolute -right-1 -top-1 w-4 h-4 bg-green-500 rounded-full animate-ping" />
                       )}

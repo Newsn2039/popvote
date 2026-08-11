@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { getSocket } from '@/lib/socket';
-import { GameState, Teacher } from '@/lib/types';
+import { GameState, Teacher, FinalResults, VoteResult } from '@/lib/types';
 
 export default function VotePage() {
   const [state, setState] = useState<GameState | null>(null);
@@ -11,6 +11,7 @@ export default function VotePage() {
   const [tapCount, setTapCount] = useState(0);
   const [countdown, setCountdown] = useState<string>('');
   const [showRing, setShowRing] = useState(false);
+  const [results, setResults] = useState<FinalResults | null>(null);
   const ringKey = useRef(0);
 
   useEffect(() => {
@@ -22,11 +23,17 @@ export default function VotePage() {
 
     socket.on('vote-opened', () => {
       setTapCount(0);
+      setResults(null);
+    });
+
+    socket.on('results', (data: FinalResults) => {
+      setResults(data);
     });
 
     return () => {
       socket.off('state-update');
       socket.off('vote-opened');
+      socket.off('results');
     };
   }, []);
 
@@ -77,11 +84,58 @@ export default function VotePage() {
     );
   }
 
+  // Show results on student phone
+  if (results) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4 flex flex-col items-center">
+        <h1 className="text-2xl font-bold text-indigo-700 mb-1 mt-4">ผลการโหวต</h1>
+        <p className="text-gray-500 mb-6">ขอบคุณที่ร่วมโหวต!</p>
+
+        <div className="w-full max-w-sm space-y-3">
+          {results.rankings.map((r: VoteResult, idx: number) => (
+            <div
+              key={r.teacher.id}
+              className={`bg-white rounded-xl p-4 flex items-center gap-4 shadow-md border ${
+                idx === 0 ? 'border-yellow-400 ring-2 ring-yellow-300' : 'border-gray-100'
+              } animate-slide-right`}
+              style={{ animationDelay: `${idx * 0.1}s`, opacity: 0 }}
+            >
+              <div className="text-2xl font-bold w-8 text-center">
+                {idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `${idx + 1}`}
+              </div>
+              {r.teacher.image ? (
+                <img
+                  src={r.teacher.image}
+                  alt={r.teacher.name}
+                  className={`w-14 h-14 rounded-full object-cover border-2 ${
+                    idx === 0 ? 'border-yellow-400' : idx === 1 ? 'border-gray-400' : idx === 2 ? 'border-orange-400' : 'border-gray-200'
+                  }`}
+                />
+              ) : (
+                <div className={`w-14 h-14 rounded-full bg-indigo-200 flex items-center justify-center text-2xl border-2 ${
+                  idx === 0 ? 'border-yellow-400' : 'border-gray-200'
+                }`}>
+                  {r.teacher.name.charAt(0)}
+                </div>
+              )}
+              <div className="flex-1">
+                <p className={`font-bold ${idx === 0 ? 'text-lg text-indigo-700' : 'text-gray-800'}`}>
+                  {r.teacher.name}
+                </p>
+                <p className="text-sm text-gray-500">{r.votes.toLocaleString()} คะแนน</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
   if (!selectedTeacher) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4 flex flex-col">
         <h1 className="text-2xl font-bold text-center text-indigo-700 mb-2">
-          PopVote
+          PopularVote
         </h1>
         <p className="text-center text-gray-500 mb-6">เลือกครูที่คุณชอบ</p>
 
@@ -92,11 +146,17 @@ export default function VotePage() {
               onClick={() => setSelectedTeacher(t)}
               className="bg-white rounded-xl p-4 flex flex-col items-center gap-3 active:scale-95 transition-transform hover:bg-indigo-50 shadow-md border border-indigo-100"
             >
-              <img
-                src={t.image}
-                alt={t.name}
-                className="w-24 h-24 rounded-full object-cover border-3 border-indigo-400"
-              />
+              {t.image ? (
+                <img
+                  src={t.image}
+                  alt={t.name}
+                  className="w-24 h-24 rounded-full object-cover border-3 border-indigo-400"
+                />
+              ) : (
+                <div className="w-24 h-24 rounded-full bg-indigo-200 flex items-center justify-center text-4xl border-3 border-indigo-400">
+                  {t.name.charAt(0)}
+                </div>
+              )}
               <span className="font-semibold text-lg text-gray-700">{t.name}</span>
             </button>
           ))}
@@ -115,11 +175,17 @@ export default function VotePage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex flex-col items-center justify-center p-4 select-none">
       <div className="text-center mb-6">
-        <img
-          src={selectedTeacher.image}
-          alt={selectedTeacher.name}
-          className="w-20 h-20 rounded-full object-cover mx-auto border-3 border-indigo-500 mb-2"
-        />
+        {selectedTeacher.image ? (
+          <img
+            src={selectedTeacher.image}
+            alt={selectedTeacher.name}
+            className="w-20 h-20 rounded-full object-cover mx-auto border-3 border-indigo-500 mb-2"
+          />
+        ) : (
+          <div className="w-20 h-20 rounded-full bg-indigo-200 flex items-center justify-center text-3xl mx-auto border-3 border-indigo-500 mb-2">
+            {selectedTeacher.name.charAt(0)}
+          </div>
+        )}
         <p className="text-lg font-semibold text-indigo-700">{selectedTeacher.name}</p>
         <button
           onClick={() => {
@@ -178,7 +244,7 @@ export default function VotePage() {
 
       {isClosed && (
         <p className="text-xl text-purple-600 text-center">
-          การโหวตสิ้นสุดแล้ว!
+          การโหวตสิ้นสุดแล้ว — รอประกาศผล...
         </p>
       )}
     </div>

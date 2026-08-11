@@ -4,7 +4,13 @@ import { useEffect, useState, useRef } from 'react';
 import { getSocket } from '@/lib/socket';
 import { GameState, Teacher } from '@/lib/types';
 
+const ADMIN_PASSWORD = 'popvote2025';
+
 export default function AdminPage() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [password, setPassword] = useState('');
+  const [passwordError, setPasswordError] = useState(false);
+
   const [state, setState] = useState<GameState>({
     status: 'idle',
     teachers: [],
@@ -21,6 +27,12 @@ export default function AdminPage() {
   const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
+    const saved = sessionStorage.getItem('admin-auth');
+    if (saved === 'true') setIsAuthenticated(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isAuthenticated) return;
     const socket = getSocket();
 
     socket.on('state-update', (data: GameState) => {
@@ -35,7 +47,7 @@ export default function AdminPage() {
       socket.off('state-update');
       socket.off('connected-count');
     };
-  }, []);
+  }, [isAuthenticated]);
 
   useEffect(() => {
     if (!state.votingEndsAt || state.status !== 'voting') {
@@ -58,6 +70,16 @@ export default function AdminPage() {
     return () => clearInterval(timer);
   }, [state.votingEndsAt, state.status]);
 
+  const handleLogin = () => {
+    if (password === ADMIN_PASSWORD) {
+      setIsAuthenticated(true);
+      setPasswordError(false);
+      sessionStorage.setItem('admin-auth', 'true');
+    } else {
+      setPasswordError(true);
+    }
+  };
+
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -71,13 +93,13 @@ export default function AdminPage() {
   const addTeacher = async () => {
     if (!name.trim()) return;
 
-    let imageUrl = '/uploads/default.png';
+    let imageUrl = '';
     if (imageFile) {
-      const formData = new FormData();
-      formData.append('file', imageFile);
-      const res = await fetch('/api/upload', { method: 'POST', body: formData });
-      const data = await res.json();
-      imageUrl = data.url;
+      const reader = new FileReader();
+      imageUrl = await new Promise<string>((resolve) => {
+        reader.onload = () => resolve(reader.result as string);
+        reader.readAsDataURL(imageFile);
+      });
     }
 
     getSocket().emit('admin:add-teacher', { name: name.trim(), image: imageUrl });
@@ -123,12 +145,44 @@ export default function AdminPage() {
     finalized: 'bg-purple-500',
   };
 
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
+        <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-sm">
+          <h1 className="text-2xl font-bold text-center text-indigo-700 mb-2">PopularVote Admin</h1>
+          <p className="text-center text-gray-500 mb-6">กรุณาใส่รหัสผ่านเพื่อเข้าสู่ระบบ</p>
+          <input
+            type="password"
+            placeholder="รหัสผ่าน"
+            value={password}
+            onChange={(e) => {
+              setPassword(e.target.value);
+              setPasswordError(false);
+            }}
+            onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
+            className={`w-full px-4 py-3 bg-gray-100 rounded-lg text-gray-800 placeholder-gray-400 outline-none focus:ring-2 focus:ring-indigo-400 border ${passwordError ? 'border-red-400' : 'border-gray-200'} mb-3`}
+            autoFocus
+          />
+          {passwordError && (
+            <p className="text-red-500 text-sm mb-3">รหัสผ่านไม่ถูกต้อง</p>
+          )}
+          <button
+            onClick={handleLogin}
+            className="w-full px-6 py-3 bg-indigo-600 hover:bg-indigo-700 rounded-lg font-semibold transition text-white"
+          >
+            เข้าสู่ระบบ
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4 md:p-8 max-w-4xl mx-auto">
       <h1 className="text-3xl font-bold text-center mb-2 text-indigo-700">
-        PopVote Admin
+        PopularVote Admin
       </h1>
-      <p className="text-center text-gray-500 mb-6">จัดการการโหวตแต่งกายครูวันวิทยาศาสตร์</p>
+      <p className="text-center text-gray-500 mb-6">จัดการการโหวตประกวดครู</p>
 
       {/* Status Bar */}
       <div className="bg-white rounded-xl p-4 mb-6 flex flex-wrap gap-4 items-center justify-between shadow-md">
@@ -195,11 +249,17 @@ export default function AdminPage() {
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {state.teachers.map((t: Teacher) => (
               <div key={t.id} className="bg-indigo-50 rounded-lg p-3 text-center relative group border border-indigo-100">
-                <img
-                  src={t.image}
-                  alt={t.name}
-                  className="w-20 h-20 rounded-full mx-auto mb-2 object-cover border-2 border-indigo-400"
-                />
+                {t.image ? (
+                  <img
+                    src={t.image}
+                    alt={t.name}
+                    className="w-20 h-20 rounded-full mx-auto mb-2 object-cover border-2 border-indigo-400"
+                  />
+                ) : (
+                  <div className="w-20 h-20 rounded-full mx-auto mb-2 bg-indigo-200 flex items-center justify-center text-3xl border-2 border-indigo-400">
+                    {t.name.charAt(0)}
+                  </div>
+                )}
                 <p className="font-medium text-sm text-gray-700">{t.name}</p>
                 {(state.status === 'idle' || state.status === 'finalized') && (
                   <button

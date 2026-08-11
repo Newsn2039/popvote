@@ -56,7 +56,7 @@ app.prepare().then(() => {
 
   const io = new Server(server, {
     cors: { origin: '*' },
-    maxHttpBufferSize: 1e6,
+    maxHttpBufferSize: 10e6,
   });
 
   setupSocketHandlers(io);
