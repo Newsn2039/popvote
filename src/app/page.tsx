@@ -27,7 +27,7 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex flex-col items-center justify-center p-8">
       <h1 className="text-5xl md:text-7xl font-bold text-indigo-700 mb-4 text-center">
-        PopVote
+        PopularVote
       </h1>
       <p className="text-xl md:text-2xl text-gray-700 mb-2 text-center">
         โหวตยอดนิยมแต่งกายครูวันวิทยาศาสตร์

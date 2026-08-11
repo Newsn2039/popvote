@@ -4,7 +4,7 @@ import { useEffect, useState, useRef } from 'react';
 import { getSocket } from '@/lib/socket';
 import { GameState, Teacher } from '@/lib/types';
 
-const ADMIN_PASSWORD = 'popvote2025';
+const ADMIN_PASSWORD = 'pop2026';
 
 export default function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
