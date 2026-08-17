@@ -195,8 +195,8 @@ export default function DashboardPage() {
           teachers.map((t: Teacher, idx: number) => {
             const progress = positions.get(t.id) || 0;
             return (
-              <div key={t.id} className={`relative rounded-xl overflow-hidden ${LANE_BG[idx % LANE_BG.length]} border border-white/50`}>
-                <div className="h-20 relative">
+              <div key={t.id} className={`relative rounded-xl ${LANE_BG[idx % LANE_BG.length]} border border-white/50`}>
+                <div className="h-24 relative overflow-x-clip">
                   <div className="absolute inset-0 flex items-center px-4">
                     <div className="w-full border-t-2 border-dashed border-gray-300/50" />
                   </div>
@@ -206,7 +206,7 @@ export default function DashboardPage() {
                       style={{ backgroundSize: '100% 8px' }} />
                   </div>
 
-                  <div className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-lg">
+                  <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-lg">
                     {t.name}
                   </div>
 
@@ -217,7 +217,7 @@ export default function DashboardPage() {
 
                   <div
                     className="absolute top-1/2 -translate-y-1/2 transition-all duration-200 ease-out"
-                    style={{ left: `${progress > 0 ? progress : 50}%`, transform: `translateX(-50%) translateY(-50%)` }}
+                    style={{ left: `${Math.max(progress, 2)}%`, transform: `translateX(-50%) translateY(-50%)` }}
                   >
                     <div className="relative">
                       {t.image ? (
