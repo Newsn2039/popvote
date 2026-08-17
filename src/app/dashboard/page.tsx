@@ -17,6 +17,19 @@ const LANE_COLORS = [
   'from-indigo-400 to-indigo-600',
 ];
 
+const LANE_FILL = [
+  'bg-red-500',
+  'bg-blue-500',
+  'bg-green-500',
+  'bg-yellow-500',
+  'bg-purple-500',
+  'bg-pink-500',
+  'bg-cyan-500',
+  'bg-orange-500',
+  'bg-teal-500',
+  'bg-indigo-500',
+];
+
 const LANE_BG = [
   'bg-red-100',
   'bg-blue-100',
@@ -195,46 +208,32 @@ export default function DashboardPage() {
           teachers.map((t: Teacher, idx: number) => {
             const progress = positions.get(t.id) || 0;
             return (
-              <div key={t.id} className={`relative rounded-xl overflow-hidden ${LANE_BG[idx % LANE_BG.length]} border border-white/50`}>
-                <div className="h-20 relative">
-                  <div className="absolute inset-0 flex items-center px-4">
-                    <div className="w-full border-t-2 border-dashed border-gray-300/50" />
-                  </div>
-
-                  <div className="absolute right-0 top-0 bottom-0 w-2">
-                    <div className="h-full w-full bg-gradient-to-b from-gray-400/40 via-white/40 to-gray-400/40"
-                      style={{ backgroundSize: '100% 8px' }} />
-                  </div>
-
-                  <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-600 font-bold text-lg">
-                    {t.name}
-                  </div>
-
-                  <div
-                    className={`absolute left-0 top-0 bottom-0 bg-gradient-to-r ${LANE_COLORS[idx % LANE_COLORS.length]} opacity-20 transition-all duration-200 ease-out`}
-                    style={{ width: `${progress}%` }}
-                  />
-
-                  <div
-                    className="absolute top-1/2 -translate-y-1/2 transition-all duration-200 ease-out"
-                    style={{ left: `${Math.max(progress, 2)}%`, transform: `translateX(-50%) translateY(-50%)` }}
-                  >
-                    <div className="relative">
-                      {t.image ? (
-                        <img
-                          src={t.image}
-                          alt={t.name}
-                          className="w-12 h-12 rounded-full object-cover border-2 border-white shadow-lg"
-                        />
-                      ) : (
-                        <div className="w-12 h-12 rounded-full bg-indigo-200 flex items-center justify-center text-lg font-bold border-2 border-white shadow-lg">
-                          {t.name.charAt(0)}
-                        </div>
-                      )}
-                      {state.status === 'voting' && progress > 5 && (
-                        <div className="absolute -right-1 -top-1 w-4 h-4 bg-green-500 rounded-full animate-ping" />
-                      )}
+              <div key={t.id} className="relative flex items-center gap-0">
+                {/* Avatar overlapping the bar */}
+                <div className="relative z-10 -mr-4 shrink-0">
+                  {t.image ? (
+                    <img
+                      src={t.image}
+                      alt={t.name}
+                      className="w-14 h-14 rounded-full object-cover border-3 border-gray-800 shadow-lg"
+                    />
+                  ) : (
+                    <div className="w-14 h-14 rounded-full bg-indigo-200 flex items-center justify-center text-xl font-bold border-3 border-gray-800 shadow-lg">
+                      {t.name.charAt(0)}
                     </div>
+                  )}
+                  {state.status === 'voting' && progress > 5 && (
+                    <div className="absolute -right-1 -top-1 w-4 h-4 bg-green-500 rounded-full animate-ping" />
+                  )}
+                </div>
+                {/* HP bar */}
+                <div className="flex-1 h-10 bg-gray-800 rounded-r-lg border-2 border-gray-900 overflow-hidden relative">
+                  <div
+                    className={`absolute left-0 top-0 bottom-0 ${LANE_FILL[idx % LANE_FILL.length]} transition-all duration-200 ease-out`}
+                    style={{ width: `${Math.max(progress, 2)}%` }}
+                  />
+                  <div className="absolute inset-0 flex items-center pl-6">
+                    <span className="text-white font-bold text-lg drop-shadow-md">{t.name}</span>
                   </div>
                 </div>
               </div>
