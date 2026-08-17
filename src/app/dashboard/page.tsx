@@ -206,7 +206,7 @@ export default function DashboardPage() {
                       style={{ backgroundSize: '100% 8px' }} />
                   </div>
 
-                  <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-lg">
+                  <div className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-lg">
                     {t.name}
                   </div>
 
@@ -217,7 +217,7 @@ export default function DashboardPage() {
 
                   <div
                     className="absolute top-1/2 -translate-y-1/2 transition-all duration-200 ease-out"
-                    style={{ left: `${Math.max(progress, 2)}%`, transform: `translateX(-50%) translateY(-50%)` }}
+                    style={{ left: `${progress > 0 ? progress : 50}%`, transform: `translateX(-50%) translateY(-50%)` }}
                   >
                     <div className="relative">
                       {t.image ? (

@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "PopVote - โหวตยอดนิยมแต่งกายครูวันวิทยาศาสตร์",
+  title: "PopularVote - โหวตยอดนิยมแต่งกายครูวันวิทยาศาสตร์",
   description: "เกมโหวตแต่งกายครูวันวิทยาศาสตร์ แบบ Pop Cat",
 };
 
