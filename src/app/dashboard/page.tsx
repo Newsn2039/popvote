@@ -208,32 +208,37 @@ export default function DashboardPage() {
           teachers.map((t: Teacher, idx: number) => {
             const progress = positions.get(t.id) || 0;
             return (
-              <div key={t.id} className="relative flex items-center gap-0">
-                {/* Avatar overlapping the bar */}
-                <div className="relative z-10 -mr-4 shrink-0">
-                  {t.image ? (
-                    <img
-                      src={t.image}
-                      alt={t.name}
-                      className="w-14 h-14 rounded-full object-cover border-3 border-gray-800 shadow-lg"
-                    />
-                  ) : (
-                    <div className="w-14 h-14 rounded-full bg-indigo-200 flex items-center justify-center text-xl font-bold border-3 border-gray-800 shadow-lg">
-                      {t.name.charAt(0)}
-                    </div>
-                  )}
-                  {state.status === 'voting' && progress > 5 && (
-                    <div className="absolute -right-1 -top-1 w-4 h-4 bg-green-500 rounded-full animate-ping" />
-                  )}
-                </div>
+              <div key={t.id} className="relative h-14">
                 {/* HP bar */}
-                <div className="flex-1 h-10 bg-gray-800 rounded-r-lg border-2 border-gray-900 overflow-hidden relative">
+                <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-10 bg-gray-800 rounded-lg border-2 border-gray-900 overflow-hidden">
                   <div
                     className={`absolute left-0 top-0 bottom-0 ${LANE_FILL[idx % LANE_FILL.length]} transition-all duration-200 ease-out`}
                     style={{ width: `${Math.max(progress, 2)}%` }}
                   />
-                  <div className="absolute inset-0 flex items-center pl-6">
+                  <div className="absolute inset-0 flex items-center pl-4">
                     <span className="text-white font-bold text-lg drop-shadow-md">{t.name}</span>
+                  </div>
+                </div>
+                {/* Avatar running ahead of the bar */}
+                <div
+                  className="absolute z-10 top-1/2 transition-all duration-200 ease-out"
+                  style={{ left: `${Math.max(progress, 2)}%`, transform: 'translateX(-50%) translateY(-50%)' }}
+                >
+                  <div className="relative">
+                    {t.image ? (
+                      <img
+                        src={t.image}
+                        alt={t.name}
+                        className="w-14 h-14 rounded-full object-cover border-3 border-gray-800 shadow-lg"
+                      />
+                    ) : (
+                      <div className="w-14 h-14 rounded-full bg-indigo-200 flex items-center justify-center text-xl font-bold border-3 border-gray-800 shadow-lg">
+                        {t.name.charAt(0)}
+                      </div>
+                    )}
+                    {state.status === 'voting' && progress > 5 && (
+                      <div className="absolute -right-1 -top-1 w-4 h-4 bg-green-500 rounded-full animate-ping" />
+                    )}
                   </div>
                 </div>
               </div>
