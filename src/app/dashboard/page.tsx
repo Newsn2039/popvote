@@ -206,7 +206,7 @@ export default function DashboardPage() {
                       style={{ backgroundSize: '100% 8px' }} />
                   </div>
 
-                  <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-lg">
+                  <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-600 font-bold text-lg">
                     {t.name}
                   </div>
 
@@ -224,10 +224,10 @@ export default function DashboardPage() {
                         <img
                           src={t.image}
                           alt={t.name}
-                          className="w-14 h-14 rounded-full object-cover border-3 border-white shadow-lg"
+                          className="w-16 h-16 rounded-full object-cover border-3 border-white shadow-lg"
                         />
                       ) : (
-                        <div className="w-14 h-14 rounded-full bg-indigo-200 flex items-center justify-center text-xl font-bold border-3 border-white shadow-lg">
+                        <div className="w-16 h-16 rounded-full bg-indigo-200 flex items-center justify-center text-xl font-bold border-3 border-white shadow-lg">
                           {t.name.charAt(0)}
                         </div>
                       )}
