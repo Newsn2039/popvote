@@ -21,7 +21,8 @@ export default function AdminPage() {
   const [name, setName] = useState('');
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [duration, setDuration] = useState(3);
+  const [durationMin, setDurationMin] = useState(3);
+  const [durationSec, setDurationSec] = useState(0);
   const [countdown, setCountdown] = useState<string>('');
   const [connectedCount, setConnectedCount] = useState(0);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -114,7 +115,8 @@ export default function AdminPage() {
   };
 
   const openVote = (keepScores = false) => {
-    getSocket().emit('admin:open-vote', { durationMinutes: duration, keepScores });
+    const totalSeconds = durationMin * 60 + durationSec;
+    getSocket().emit('admin:open-vote', { durationSeconds: totalSeconds, keepScores });
   };
 
   const closeVote = () => {
@@ -281,16 +283,29 @@ export default function AdminPage() {
 
         {state.status === 'idle' && state.teachers.length >= 2 && (
           <div className="flex flex-col sm:flex-row gap-4 items-end">
-            <div>
-              <label className="block text-sm text-gray-500 mb-1">จำกัดเวลา (นาที)</label>
-              <input
-                type="number"
-                min={1}
-                max={30}
-                value={duration}
-                onChange={(e) => setDuration(Number(e.target.value))}
-                className="w-24 px-3 py-2 bg-gray-100 rounded-lg text-gray-800 outline-none focus:ring-2 focus:ring-green-400 border border-gray-200"
-              />
+            <div className="flex gap-2 items-end">
+              <div>
+                <label className="block text-sm text-gray-500 mb-1">นาที</label>
+                <input
+                  type="number"
+                  min={0}
+                  max={30}
+                  value={durationMin}
+                  onChange={(e) => setDurationMin(Number(e.target.value))}
+                  className="w-20 px-3 py-2 bg-gray-100 rounded-lg text-gray-800 outline-none focus:ring-2 focus:ring-green-400 border border-gray-200"
+                />
+              </div>
+              <div>
+                <label className="block text-sm text-gray-500 mb-1">วินาที</label>
+                <input
+                  type="number"
+                  min={0}
+                  max={59}
+                  value={durationSec}
+                  onChange={(e) => setDurationSec(Number(e.target.value))}
+                  className="w-20 px-3 py-2 bg-gray-100 rounded-lg text-gray-800 outline-none focus:ring-2 focus:ring-green-400 border border-gray-200"
+                />
+              </div>
             </div>
             <button
               onClick={() => openVote()}

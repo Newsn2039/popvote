@@ -26,9 +26,13 @@ class Store {
   }
 
   openVoting(durationMinutes: number, onTimeUp: () => void, keepScores = false): void {
-    this.durationMinutes = durationMinutes;
+    this.openVotingSeconds(durationMinutes * 60, onTimeUp, keepScores);
+  }
+
+  openVotingSeconds(durationSeconds: number, onTimeUp: () => void, keepScores = false): void {
+    this.durationMinutes = Math.ceil(durationSeconds / 60);
     this.status = 'voting';
-    this.votingEndsAt = Date.now() + durationMinutes * 60 * 1000;
+    this.votingEndsAt = Date.now() + durationSeconds * 1000;
 
     if (!keepScores) {
       for (const t of this.teachers) {
@@ -39,7 +43,7 @@ class Store {
     this.votingTimer = setTimeout(() => {
       this.closeVoting();
       onTimeUp();
-    }, durationMinutes * 60 * 1000);
+    }, durationSeconds * 1000);
   }
 
   closeVoting(): void {

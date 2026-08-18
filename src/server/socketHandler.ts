@@ -68,8 +68,9 @@ export function setupSocketHandlers(io: Server) {
       broadcastState();
     });
 
-    socket.on('admin:open-vote', (data: { durationMinutes: number; keepScores?: boolean }) => {
-      store.openVoting(data.durationMinutes, () => {
+    socket.on('admin:open-vote', (data: { durationSeconds?: number; durationMinutes?: number; keepScores?: boolean }) => {
+      const seconds = data.durationSeconds ?? (data.durationMinutes ?? 3) * 60;
+      store.openVotingSeconds(seconds, () => {
         stopBatchBroadcast();
         io.emit('vote-closed');
         broadcastState();
