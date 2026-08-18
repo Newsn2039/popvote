@@ -333,16 +333,29 @@ export default function AdminPage() {
           <div className="space-y-3">
             <p className="text-orange-600 font-medium">โหวตปิดแล้ว — คะแนนยังไม่ถูกเปิดเผย</p>
             <div className="flex flex-col sm:flex-row gap-4 items-end">
-              <div>
-                <label className="block text-sm text-gray-500 mb-1">จำกัดเวลา (นาที)</label>
-                <input
-                  type="number"
-                  min={1}
-                  max={30}
-                  value={duration}
-                  onChange={(e) => setDuration(Number(e.target.value))}
-                  className="w-24 px-3 py-2 bg-gray-100 rounded-lg text-gray-800 outline-none focus:ring-2 focus:ring-green-400 border border-gray-200"
-                />
+              <div className="flex gap-2 items-end">
+                <div>
+                  <label className="block text-sm text-gray-500 mb-1">นาที</label>
+                  <input
+                    type="number"
+                    min={0}
+                    max={30}
+                    value={durationMin}
+                    onChange={(e) => setDurationMin(Number(e.target.value))}
+                    className="w-20 px-3 py-2 bg-gray-100 rounded-lg text-gray-800 outline-none focus:ring-2 focus:ring-green-400 border border-gray-200"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm text-gray-500 mb-1">วินาที</label>
+                  <input
+                    type="number"
+                    min={0}
+                    max={59}
+                    value={durationSec}
+                    onChange={(e) => setDurationSec(Number(e.target.value))}
+                    className="w-20 px-3 py-2 bg-gray-100 rounded-lg text-gray-800 outline-none focus:ring-2 focus:ring-green-400 border border-gray-200"
+                  />
+                </div>
               </div>
               <button
                 onClick={() => openVote(true)}
