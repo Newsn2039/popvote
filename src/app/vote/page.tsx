@@ -179,10 +179,10 @@ export default function VotePage() {
           <img
             src={selectedTeacher.image}
             alt={selectedTeacher.name}
-            className="w-20 h-20 rounded-full object-cover mx-auto border-3 border-indigo-500 mb-2"
+            className="w-32 h-32 rounded-full object-cover mx-auto border-4 border-indigo-500 mb-2"
           />
         ) : (
-          <div className="w-20 h-20 rounded-full bg-indigo-200 flex items-center justify-center text-3xl mx-auto border-3 border-indigo-500 mb-2">
+          <div className="w-32 h-32 rounded-full bg-indigo-200 flex items-center justify-center text-5xl mx-auto border-4 border-indigo-500 mb-2">
             {selectedTeacher.name.charAt(0)}
           </div>
         )}
