@@ -37,6 +37,19 @@ export function setupSocketHandlers(io: Server) {
     io.emit('connected-count', { count: store.connectedClients });
   }
 
+  // Resume voting timer if server restarted mid-vote
+  if (store.status === 'voting') {
+    const resumed = store.resumeVoting(() => {
+      stopBatchBroadcast();
+      io.emit('vote-closed');
+      broadcastState();
+    });
+    if (resumed) {
+      startBatchBroadcast();
+      console.log('> Resumed voting timer from saved state');
+    }
+  }
+
   io.on('connection', (socket: Socket) => {
     store.connectedClients++;
     broadcastConnectedCount();
