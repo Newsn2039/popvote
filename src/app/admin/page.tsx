@@ -91,16 +91,32 @@ export default function AdminPage() {
     }
   };
 
+  const compressImage = (file: File, maxSize = 200): Promise<string> => {
+    return new Promise((resolve) => {
+      const img = new Image();
+      const url = URL.createObjectURL(file);
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let w = img.width;
+        let h = img.height;
+        if (w > h) { h = (maxSize * h) / w; w = maxSize; }
+        else { w = (maxSize * w) / h; h = maxSize; }
+        canvas.width = w;
+        canvas.height = h;
+        canvas.getContext('2d')!.drawImage(img, 0, 0, w, h);
+        URL.revokeObjectURL(url);
+        resolve(canvas.toDataURL('image/jpeg', 0.7));
+      };
+      img.src = url;
+    });
+  };
+
   const addTeacher = async () => {
     if (!name.trim()) return;
 
     let imageUrl = '';
     if (imageFile) {
-      const reader = new FileReader();
-      imageUrl = await new Promise<string>((resolve) => {
-        reader.onload = () => resolve(reader.result as string);
-        reader.readAsDataURL(imageFile);
-      });
+      imageUrl = await compressImage(imageFile);
     }
 
     getSocket().emit('admin:add-teacher', { name: name.trim(), image: imageUrl });
