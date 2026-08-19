@@ -12,7 +12,13 @@ export default function VotePage() {
   const [countdown, setCountdown] = useState<string>('');
   const [showRing, setShowRing] = useState(false);
   const [results, setResults] = useState<FinalResults | null>(null);
-  const [kickCooldown, setKickCooldown] = useState(0);
+  const [kickCooldown, setKickCooldown] = useState(() => {
+    if (typeof window === 'undefined') return 0;
+    const kickUntil = localStorage.getItem('popvote-kick-until');
+    if (!kickUntil) return 0;
+    const remaining = Math.ceil((parseInt(kickUntil) - Date.now()) / 1000);
+    return remaining > 0 ? remaining : 0;
+  });
   const ringKey = useRef(0);
 
   useEffect(() => {
@@ -31,10 +37,12 @@ export default function VotePage() {
       setResults(data);
     });
 
-    socket.on('vote-kick', () => {
+    socket.on('vote-kick', (data?: { cooldown?: number }) => {
       setSelectedTeacher(null);
       setTapCount(0);
-      setKickCooldown(15);
+      const cd = data?.cooldown ?? 15;
+      setKickCooldown(cd);
+      localStorage.setItem('popvote-kick-until', String(Date.now() + cd * 1000));
     });
 
     return () => {
@@ -67,7 +75,10 @@ export default function VotePage() {
   }, [state?.votingEndsAt, state?.status]);
 
   useEffect(() => {
-    if (kickCooldown <= 0) return;
+    if (kickCooldown <= 0) {
+      localStorage.removeItem('popvote-kick-until');
+      return;
+    }
     const t = setTimeout(() => setKickCooldown((c) => c - 1), 1000);
     return () => clearTimeout(t);
   }, [kickCooldown]);

@@ -9,6 +9,9 @@ const PATTERN_WINDOW = 30; // need 30 samples before judging
 const VARIANCE_THRESHOLD = 6; // stddev < 6ms = impossibly consistent = bot
 const PENALTY_DURATION = 3000; // block votes for 3 seconds after kick
 const MAX_CLICKS_PER_SECOND = 16; // human max ~10-12 taps/sec
+const KICK_COOLDOWN = 15000; // 15 seconds cooldown after kick
+
+const kickedIPs = new Map<string, number>(); // IP → kickUntil timestamp
 
 function detectAutoClicker(intervals: number[]): boolean {
   if (intervals.length < PATTERN_WINDOW) return false;
@@ -81,6 +84,15 @@ export function setupSocketHandlers(io: Server) {
     store.connectedClients++;
     broadcastConnectedCount();
 
+    const clientIP = socket.handshake.headers['x-forwarded-for'] as string || socket.handshake.address;
+
+    // Check if this IP is still in cooldown from a previous kick
+    const kickUntil = kickedIPs.get(clientIP);
+    if (kickUntil && kickUntil > Date.now()) {
+      const remainingSec = Math.ceil((kickUntil - Date.now()) / 1000);
+      socket.emit('vote-kick', { cooldown: remainingSec });
+    }
+
     socket.emit('state-update', store.getState());
     if (store.status === 'voting') {
       socket.emit('race-update', { positions: store.getRacePositions() });
@@ -111,7 +123,8 @@ export function setupSocketHandlers(io: Server) {
         rawIntervals.length = 0;
         rawTimestamps.length = 0;
         lastRawTime = 0;
-        socket.emit('vote-kick');
+        kickedIPs.set(clientIP, now + KICK_COOLDOWN);
+        socket.emit('vote-kick', { cooldown: Math.ceil(KICK_COOLDOWN / 1000) });
         return;
       }
 
