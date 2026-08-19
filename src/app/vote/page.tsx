@@ -12,6 +12,7 @@ export default function VotePage() {
   const [countdown, setCountdown] = useState<string>('');
   const [showRing, setShowRing] = useState(false);
   const [results, setResults] = useState<FinalResults | null>(null);
+  const [preCountdown, setPreCountdown] = useState(0);
   const [kickCooldown, setKickCooldown] = useState(() => {
     if (typeof window === 'undefined') return 0;
     const kickUntil = localStorage.getItem('popvote-kick-until');
@@ -31,6 +32,7 @@ export default function VotePage() {
     socket.on('vote-opened', () => {
       setTapCount(0);
       setResults(null);
+      setPreCountdown(5);
     });
 
     socket.on('results', (data: FinalResults) => {
@@ -83,8 +85,14 @@ export default function VotePage() {
     return () => clearTimeout(t);
   }, [kickCooldown]);
 
+  useEffect(() => {
+    if (preCountdown <= 0) return;
+    const t = setTimeout(() => setPreCountdown((c) => c - 1), 1000);
+    return () => clearTimeout(t);
+  }, [preCountdown]);
+
   const handleTap = useCallback(() => {
-    if (!selectedTeacher || state?.status !== 'voting') return;
+    if (!selectedTeacher || state?.status !== 'voting' || preCountdown > 0) return;
 
     getSocket().emit('vote', { teacherId: selectedTeacher.id });
     setTapCount((c) => c + 1);
@@ -99,7 +107,7 @@ export default function VotePage() {
     if (navigator.vibrate) {
       navigator.vibrate(10);
     }
-  }, [selectedTeacher, state?.status]);
+  }, [selectedTeacher, state?.status, preCountdown]);
 
   if (!state) {
     return (
@@ -237,6 +245,13 @@ export default function VotePage() {
         <div className="text-4xl font-mono text-indigo-600 mb-4">{countdown}</div>
       )}
 
+      {isVoting && preCountdown > 0 && (
+        <div className="fixed inset-0 bg-black/60 flex flex-col items-center justify-center z-50">
+          <p className="text-white text-2xl mb-4 font-semibold">เตรียมตัว!</p>
+          <div className="text-9xl font-bold text-white animate-bounce">{preCountdown}</div>
+        </div>
+      )}
+
       <div className="relative mb-6">
         {showRing && (
           <div
@@ -249,12 +264,12 @@ export default function VotePage() {
             e.preventDefault();
             handleTap();
           }}
-          disabled={!isVoting}
+          disabled={!isVoting || preCountdown > 0}
           className={`
             w-48 h-48 rounded-full text-6xl font-bold
             flex items-center justify-center
             transition-all duration-100 touch-manipulation
-            ${isVoting
+            ${isVoting && preCountdown <= 0
               ? `bg-gradient-to-br from-indigo-400 to-purple-500 text-white shadow-lg shadow-indigo-300/50 active:shadow-inner cursor-pointer ${isPopping ? 'animate-pop' : ''}`
               : 'bg-gray-300 text-gray-400 cursor-not-allowed'
             }
