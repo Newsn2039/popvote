@@ -8,6 +8,7 @@ const BATCH_INTERVAL = 100;
 const PATTERN_WINDOW = 30; // need 30 samples before judging
 const VARIANCE_THRESHOLD = 6; // stddev < 6ms = impossibly consistent = bot
 const PENALTY_DURATION = 3000; // block votes for 3 seconds after kick
+const MAX_CLICKS_PER_SECOND = 16; // human max ~10-12 taps/sec
 
 function detectAutoClicker(intervals: number[]): boolean {
   if (intervals.length < PATTERN_WINDOW) return false;
@@ -17,11 +18,17 @@ function detectAutoClicker(intervals: number[]): boolean {
   const variance = recent.reduce((sum, v) => sum + (v - avg) ** 2, 0) / recent.length;
   const stdDev = Math.sqrt(variance);
 
-  // Human fingers: stddev typically 15-50ms even when tapping fast
-  // Auto-clicker: stddev < 5ms (perfectly even intervals)
   if (stdDev < VARIANCE_THRESHOLD) return true;
 
   return false;
+}
+
+function detectHighRate(timestamps: number[]): boolean {
+  if (timestamps.length < MAX_CLICKS_PER_SECOND) return false;
+  const now = timestamps[timestamps.length - 1];
+  const oneSecAgo = now - 1000;
+  const clicksInLastSec = timestamps.filter(t => t >= oneSecAgo).length;
+  return clicksInLastSec > MAX_CLICKS_PER_SECOND;
 }
 
 export function setupSocketHandlers(io: Server) {
@@ -82,22 +89,27 @@ export function setupSocketHandlers(io: Server) {
     let lastVoteTime = 0;
     let lastRawTime = 0;
     const rawIntervals: number[] = [];
+    const rawTimestamps: number[] = [];
     let penaltyUntil = 0;
 
     socket.on('vote', (data: { teacherId: string }) => {
       const now = Date.now();
 
-      // Track RAW intervals before rate limit for bot detection
+      // Track RAW timestamps and intervals before rate limit for bot detection
+      rawTimestamps.push(now);
+      if (rawTimestamps.length > 60) rawTimestamps.shift();
+
       if (lastRawTime > 0) {
         rawIntervals.push(now - lastRawTime);
         if (rawIntervals.length > 60) rawIntervals.shift();
       }
       lastRawTime = now;
 
-      // Auto-clicker detection on raw input
-      if (detectAutoClicker(rawIntervals)) {
+      // Auto-clicker detection: high rate OR consistent pattern
+      if (detectHighRate(rawTimestamps) || detectAutoClicker(rawIntervals)) {
         penaltyUntil = now + PENALTY_DURATION;
         rawIntervals.length = 0;
+        rawTimestamps.length = 0;
         lastRawTime = 0;
         socket.emit('vote-kick');
         return;
