@@ -12,6 +12,7 @@ export default function VotePage() {
   const [countdown, setCountdown] = useState<string>('');
   const [showRing, setShowRing] = useState(false);
   const [results, setResults] = useState<FinalResults | null>(null);
+  const [kickCooldown, setKickCooldown] = useState(0);
   const ringKey = useRef(0);
 
   useEffect(() => {
@@ -33,6 +34,7 @@ export default function VotePage() {
     socket.on('vote-kick', () => {
       setSelectedTeacher(null);
       setTapCount(0);
+      setKickCooldown(10);
     });
 
     return () => {
@@ -63,6 +65,12 @@ export default function VotePage() {
 
     return () => clearInterval(timer);
   }, [state?.votingEndsAt, state?.status]);
+
+  useEffect(() => {
+    if (kickCooldown <= 0) return;
+    const t = setTimeout(() => setKickCooldown((c) => c - 1), 1000);
+    return () => clearTimeout(t);
+  }, [kickCooldown]);
 
   const handleTap = useCallback(() => {
     if (!selectedTeacher || state?.status !== 'voting') return;
@@ -143,14 +151,24 @@ export default function VotePage() {
         <h1 className="text-2xl font-bold text-center text-indigo-700 mb-2">
           PopularVote
         </h1>
-        <p className="text-center text-gray-500 mb-6">เลือกครูที่คุณชอบ</p>
+        {kickCooldown > 0 ? (
+          <div className="text-center mb-4">
+            <p className="text-red-500 font-semibold mb-1">ตรวจพบการใช้โปรแกรมช่วยกด</p>
+            <p className="text-gray-500">รอ <span className="text-red-600 font-bold text-xl">{kickCooldown}</span> วินาที</p>
+          </div>
+        ) : (
+          <p className="text-center text-gray-500 mb-6">เลือกครูที่คุณชอบ</p>
+        )}
 
         <div className="grid grid-cols-2 gap-4 max-w-md mx-auto w-full">
           {state.teachers.map((t: Teacher) => (
             <button
               key={t.id}
-              onClick={() => setSelectedTeacher(t)}
-              className="bg-white rounded-xl p-4 flex flex-col items-center gap-3 active:scale-95 transition-transform hover:bg-indigo-50 shadow-md border border-indigo-100"
+              onClick={() => { if (kickCooldown <= 0) setSelectedTeacher(t); }}
+              disabled={kickCooldown > 0}
+              className={`bg-white rounded-xl p-4 flex flex-col items-center gap-3 transition-transform shadow-md border border-indigo-100 ${
+                kickCooldown > 0 ? 'opacity-50 cursor-not-allowed' : 'active:scale-95 hover:bg-indigo-50'
+              }`}
             >
               {t.image ? (
                 <img
