@@ -34,7 +34,7 @@ export default function VotePage() {
     socket.on('vote-kick', () => {
       setSelectedTeacher(null);
       setTapCount(0);
-      setKickCooldown(10);
+      setKickCooldown(15);
     });
 
     return () => {
