@@ -8,7 +8,7 @@ const BATCH_INTERVAL = 100;
 const PATTERN_WINDOW = 30; // need 30 samples before judging
 const VARIANCE_THRESHOLD = 6; // stddev < 6ms = impossibly consistent = bot
 const PENALTY_DURATION = 3000; // block votes for 3 seconds after kick
-const MAX_CLICKS_PER_SECOND = 16; // max clicks per second allowed
+const MAX_CLICKS_PER_SECOND = 13; // max clicks per second allowed
 const KICK_COOLDOWN = 15000; // 15 seconds cooldown after kick
 
 const kickedIPs = new Map<string, number>(); // IP → kickUntil timestamp
