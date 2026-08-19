@@ -5,24 +5,21 @@ const RATE_LIMIT_INTERVAL = 50; // 20 votes/sec max per client
 const BATCH_INTERVAL = 100;
 
 // Auto-clicker detection settings
-const PATTERN_WINDOW = 20; // check last 20 intervals
-const VARIANCE_THRESHOLD = 15; // if std deviation < 15ms = too consistent = bot
+const PATTERN_WINDOW = 30; // need 30 samples before judging
+const VARIANCE_THRESHOLD = 6; // stddev < 6ms = impossibly consistent = bot
 const PENALTY_DURATION = 3000; // block votes for 3 seconds after kick
-const MAX_VOTES_PER_SECOND = 15; // sustained cap
 
 function detectAutoClicker(intervals: number[]): boolean {
   if (intervals.length < PATTERN_WINDOW) return false;
   const recent = intervals.slice(-PATTERN_WINDOW);
 
-  // Check 1: variance too low = auto-clicker (humans are inconsistent)
   const avg = recent.reduce((a, b) => a + b, 0) / recent.length;
   const variance = recent.reduce((sum, v) => sum + (v - avg) ** 2, 0) / recent.length;
   const stdDev = Math.sqrt(variance);
-  if (stdDev < VARIANCE_THRESHOLD) return true;
 
-  // Check 2: sustained high rate for too long (humans slow down)
-  const avgInterval = avg;
-  if (avgInterval < 70 && intervals.length > 40) return true;
+  // Human fingers: stddev typically 15-50ms even when tapping fast
+  // Auto-clicker: stddev < 5ms (perfectly even intervals)
+  if (stdDev < VARIANCE_THRESHOLD) return true;
 
   return false;
 }
@@ -85,8 +82,6 @@ export function setupSocketHandlers(io: Server) {
     let lastVoteTime = 0;
     const intervals: number[] = [];
     let penaltyUntil = 0;
-    let votesThisSecond = 0;
-    let secondStart = 0;
 
     socket.on('vote', (data: { teacherId: string }) => {
       const now = Date.now();
@@ -96,14 +91,6 @@ export function setupSocketHandlers(io: Server) {
 
       // Basic rate limit
       if (now - lastVoteTime < RATE_LIMIT_INTERVAL) return;
-
-      // Per-second cap
-      if (now - secondStart > 1000) {
-        votesThisSecond = 0;
-        secondStart = now;
-      }
-      votesThisSecond++;
-      if (votesThisSecond > MAX_VOTES_PER_SECOND) return;
 
       // Track intervals for pattern detection
       if (lastVoteTime > 0) {
