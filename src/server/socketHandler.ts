@@ -7,7 +7,7 @@ const BATCH_INTERVAL = 100;
 // Auto-clicker detection settings
 const PATTERN_WINDOW = 20; // check last 20 intervals
 const VARIANCE_THRESHOLD = 15; // if std deviation < 15ms = too consistent = bot
-const PENALTY_DURATION = 5000; // block for 5 seconds when detected
+const PENALTY_DURATION = 3000; // block votes for 3 seconds after kick
 const MAX_VOTES_PER_SECOND = 15; // sustained cap
 
 function detectAutoClicker(intervals: number[]): boolean {
@@ -116,7 +116,7 @@ export function setupSocketHandlers(io: Server) {
       if (detectAutoClicker(intervals)) {
         penaltyUntil = now + PENALTY_DURATION;
         intervals.length = 0;
-        socket.emit('vote-penalty', { duration: PENALTY_DURATION });
+        socket.emit('vote-kick');
         return;
       }
 

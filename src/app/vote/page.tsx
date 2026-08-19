@@ -12,7 +12,6 @@ export default function VotePage() {
   const [countdown, setCountdown] = useState<string>('');
   const [showRing, setShowRing] = useState(false);
   const [results, setResults] = useState<FinalResults | null>(null);
-  const [penalty, setPenalty] = useState(false);
   const ringKey = useRef(0);
 
   useEffect(() => {
@@ -31,16 +30,16 @@ export default function VotePage() {
       setResults(data);
     });
 
-    socket.on('vote-penalty', (data: { duration: number }) => {
-      setPenalty(true);
-      setTimeout(() => setPenalty(false), data.duration);
+    socket.on('vote-kick', () => {
+      setSelectedTeacher(null);
+      setTapCount(0);
     });
 
     return () => {
       socket.off('state-update');
       socket.off('vote-opened');
       socket.off('results');
-      socket.off('vote-penalty');
+      socket.off('vote-kick');
     };
   }, []);
 
@@ -243,13 +242,7 @@ export default function VotePage() {
         </p>
       )}
 
-      {penalty && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded-lg mb-2 text-center">
-          ตรวจพบการใช้โปรแกรมช่วยกด — หยุดชั่วคราว 5 วินาที
-        </div>
-      )}
-
-      {isVoting && !penalty && (
+      {isVoting && (
         <p className="text-lg text-indigo-600 font-semibold">
           กดเร็วๆ เพื่อช่วยครู {selectedTeacher.name}!
         </p>
