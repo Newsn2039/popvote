@@ -80,32 +80,35 @@ export function setupSocketHandlers(io: Server) {
     }
 
     let lastVoteTime = 0;
-    const intervals: number[] = [];
+    let lastRawTime = 0;
+    const rawIntervals: number[] = [];
     let penaltyUntil = 0;
 
     socket.on('vote', (data: { teacherId: string }) => {
       const now = Date.now();
+
+      // Track RAW intervals before rate limit for bot detection
+      if (lastRawTime > 0) {
+        rawIntervals.push(now - lastRawTime);
+        if (rawIntervals.length > 60) rawIntervals.shift();
+      }
+      lastRawTime = now;
+
+      // Auto-clicker detection on raw input
+      if (detectAutoClicker(rawIntervals)) {
+        penaltyUntil = now + PENALTY_DURATION;
+        rawIntervals.length = 0;
+        lastRawTime = 0;
+        socket.emit('vote-kick');
+        return;
+      }
 
       // Penalty: blocked for cheating
       if (now < penaltyUntil) return;
 
       // Basic rate limit
       if (now - lastVoteTime < RATE_LIMIT_INTERVAL) return;
-
-      // Track intervals for pattern detection
-      if (lastVoteTime > 0) {
-        intervals.push(now - lastVoteTime);
-        if (intervals.length > 60) intervals.shift();
-      }
       lastVoteTime = now;
-
-      // Auto-clicker detection
-      if (detectAutoClicker(intervals)) {
-        penaltyUntil = now + PENALTY_DURATION;
-        intervals.length = 0;
-        socket.emit('vote-kick');
-        return;
-      }
 
       if (store.addVote(data.teacherId)) {
         dirty = true;
