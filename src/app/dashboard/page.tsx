@@ -158,12 +158,12 @@ export default function DashboardPage() {
       </div>
 
       {/* Racing Lanes or Results */}
-      <div className="flex-1 flex flex-col justify-center gap-3 max-w-6xl mx-auto w-full">
+      <div className="flex-1 flex flex-col justify-center gap-2 max-w-6xl mx-auto w-full">
         {results ? (
           results.rankings.map((r: VoteResult, idx: number) => (
             <div
               key={r.teacher.id}
-              className="flex items-center gap-4 animate-slide-right"
+              className="flex-1 flex items-center gap-4 animate-slide-right"
               style={{ animationDelay: `${idx * 0.15}s`, opacity: 0 }}
             >
               <div className="text-4xl font-bold w-12 text-right">
@@ -208,18 +208,16 @@ export default function DashboardPage() {
           teachers.map((t: Teacher, idx: number) => {
             const progress = positions.get(t.id) || 0;
             return (
-              <div key={t.id} className="relative h-14">
-                {/* HP bar */}
-                <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-10 bg-gray-800 rounded-lg border-2 border-gray-900 overflow-hidden">
+              <div key={t.id} className="relative flex-1 min-h-[3.5rem]">
+                <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-[70%] min-h-[2.5rem] bg-gray-800 rounded-lg border-2 border-gray-900 overflow-hidden">
                   <div
                     className={`absolute left-0 top-0 bottom-0 ${LANE_FILL[idx % LANE_FILL.length]} transition-all duration-200 ease-out`}
                     style={{ width: `${Math.max(progress, 2)}%` }}
                   />
                   <div className="absolute inset-0 flex items-center pl-4">
-                    <span className="text-white font-bold text-lg drop-shadow-md">{t.name}</span>
+                    <span className="text-white font-bold text-xl drop-shadow-md">{t.name}</span>
                   </div>
                 </div>
-                {/* Avatar running ahead of the bar */}
                 <div
                   className="absolute z-10 top-1/2 transition-all duration-200 ease-out"
                   style={{ left: `${Math.max(progress, 2)}%`, transform: 'translateX(-50%) translateY(-50%)' }}
@@ -229,10 +227,10 @@ export default function DashboardPage() {
                       <img
                         src={t.image}
                         alt={t.name}
-                        className="w-14 h-14 rounded-full object-cover border-3 border-gray-800 shadow-lg"
+                        className="w-16 h-16 rounded-full object-cover border-3 border-gray-800 shadow-lg"
                       />
                     ) : (
-                      <div className="w-14 h-14 rounded-full bg-indigo-200 flex items-center justify-center text-xl font-bold border-3 border-gray-800 shadow-lg">
+                      <div className="w-16 h-16 rounded-full bg-indigo-200 flex items-center justify-center text-xl font-bold border-3 border-gray-800 shadow-lg">
                         {t.name.charAt(0)}
                       </div>
                     )}
