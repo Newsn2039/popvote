@@ -10,6 +10,7 @@ const VARIANCE_THRESHOLD = 6; // stddev < 6ms = impossibly consistent = bot
 const PENALTY_DURATION = 3000; // block votes for 3 seconds after kick
 const MAX_CLICKS_PER_SECOND = 13; // max clicks per second allowed
 const KICK_COOLDOWN = 15000; // 15 seconds cooldown after kick
+const PRE_COUNTDOWN = 5; // seconds before voting actually starts
 
 const kickedIPs = new Map<string, number>(); // IP → kickUntil timestamp
 
@@ -152,15 +153,29 @@ export function setupSocketHandlers(io: Server) {
 
     socket.on('admin:open-vote', (data: { durationSeconds?: number; durationMinutes?: number; keepScores?: boolean }) => {
       const seconds = data.durationSeconds ?? (data.durationMinutes ?? 3) * 60;
-      store.openVotingSeconds(seconds, () => {
-        stopBatchBroadcast();
-        io.emit('vote-closed');
-        broadcastState();
-      }, data.keepScores || false);
-      startBatchBroadcast();
-      io.emit('vote-opened', { endsAt: store.votingEndsAt });
+      const keepScores = data.keepScores || false;
+
+      if (!keepScores) {
+        for (const t of store.teachers) {
+          store.votes.set(t.id, 0);
+        }
+      }
+
+      store.status = 'voting';
+      io.emit('vote-opened', { endsAt: null });
       broadcastState();
       broadcastRaceUpdate();
+
+      setTimeout(() => {
+        if (store.status !== 'voting') return;
+        store.openVotingSeconds(seconds, () => {
+          stopBatchBroadcast();
+          io.emit('vote-closed');
+          broadcastState();
+        }, true);
+        startBatchBroadcast();
+        broadcastState();
+      }, PRE_COUNTDOWN * 1000);
     });
 
     socket.on('admin:close-vote', () => {
