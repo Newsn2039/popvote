@@ -214,23 +214,23 @@ export default function DashboardPage() {
                     className={`absolute left-0 top-0 bottom-0 ${LANE_FILL[idx % LANE_FILL.length]} transition-all duration-200 ease-out`}
                     style={{ width: `${Math.max(progress, 2)}%` }}
                   />
-                  <div className="absolute inset-0 flex items-center pl-4">
+                  <div className="absolute inset-0 flex items-center pl-[12%]">
                     <span className="text-white font-bold text-xl drop-shadow-md">{t.name}</span>
                   </div>
                 </div>
                 <div
-                  className="absolute z-10 top-1/2 transition-all duration-200 ease-out"
+                  className="absolute z-10 top-1/2 h-full transition-all duration-200 ease-out"
                   style={{ left: `${Math.max(progress, 2)}%`, transform: 'translateX(-50%) translateY(-50%)' }}
                 >
-                  <div className="relative">
+                  <div className="relative h-full aspect-square">
                     {t.image ? (
                       <img
                         src={t.image}
                         alt={t.name}
-                        className="w-16 h-16 rounded-full object-cover border-3 border-gray-800 shadow-lg"
+                        className="w-full h-full rounded-full object-cover border-3 border-gray-800 shadow-lg"
                       />
                     ) : (
-                      <div className="w-16 h-16 rounded-full bg-indigo-200 flex items-center justify-center text-xl font-bold border-3 border-gray-800 shadow-lg">
+                      <div className="w-full h-full rounded-full bg-indigo-200 flex items-center justify-center text-2xl font-bold border-3 border-gray-800 shadow-lg">
                         {t.name.charAt(0)}
                       </div>
                     )}
