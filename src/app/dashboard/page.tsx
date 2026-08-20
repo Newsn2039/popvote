@@ -116,7 +116,7 @@ export default function DashboardPage() {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
         <h1 className="text-5xl font-bold text-indigo-700 mb-4">PopularVote</h1>
-        <p className="text-2xl text-gray-600">โหวตยอดนิยมแต่งกายครูวันวิทยาศาสตร์</p>
+        <p className="text-2xl text-gray-600">โหวตการแต่งกายครูที่เลิศที่สุดวันวิทยาศาสตร์</p>
         <p className="text-lg text-gray-400 mt-4">รอแอดมินเพิ่มครู...</p>
       </div>
     );
