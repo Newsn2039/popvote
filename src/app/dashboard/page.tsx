@@ -160,50 +160,78 @@ export default function DashboardPage() {
       {/* Racing Lanes or Results */}
       <div className="flex-1 flex flex-col justify-center gap-2 max-w-6xl mx-auto w-full">
         {results ? (
-          results.rankings.map((r: VoteResult, idx: number) => (
-            <div
-              key={r.teacher.id}
-              className="flex-1 flex items-center gap-4 animate-slide-right"
-              style={{ animationDelay: `${idx * 0.15}s`, opacity: 0 }}
-            >
-              <div className="text-4xl font-bold w-12 text-right">
-                {idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `${idx + 1}.`}
+          (() => {
+            const podiumOrder = [1, 0, 2];
+            const podiumHeights = ['60%', '85%', '45%'];
+            const podiumColors = ['bg-gray-300', 'bg-yellow-400', 'bg-amber-600'];
+            const podiumBorders = ['border-gray-400', 'border-yellow-500', 'border-amber-700'];
+            const medals = ['🥈', '🥇', '🥉'];
+            const top3 = results.rankings.slice(0, 3);
+            const rest = results.rankings.slice(3);
+
+            return (
+              <div className="flex flex-col items-center flex-1">
+                <div className="flex items-end justify-center gap-4 w-full max-w-3xl" style={{ height: '70%' }}>
+                  {podiumOrder.map((rank, col) => {
+                    const r = top3[rank];
+                    if (!r) return <div key={col} className="flex-1" />;
+                    return (
+                      <div key={r.teacher.id} className="flex-1 flex flex-col items-center">
+                        <div style={{ animation: `fade-up 0.6s ${0.3 + rank * 0.2}s ease-out both` }}>
+                          {r.teacher.image ? (
+                            <img
+                              src={r.teacher.image}
+                              alt={r.teacher.name}
+                              className={`w-20 h-20 md:w-28 md:h-28 rounded-full object-cover border-4 ${podiumBorders[col]} shadow-lg mx-auto`}
+                            />
+                          ) : (
+                            <div className={`w-20 h-20 md:w-28 md:h-28 rounded-full bg-indigo-200 flex items-center justify-center text-3xl md:text-5xl font-bold border-4 ${podiumBorders[col]} shadow-lg mx-auto`}>
+                              {r.teacher.name.charAt(0)}
+                            </div>
+                          )}
+                          <p className={`text-center font-bold mt-2 ${rank === 0 ? 'text-2xl md:text-3xl text-indigo-700' : 'text-lg md:text-xl text-gray-700'}`}>
+                            {r.teacher.name}
+                          </p>
+                          <p className="text-center text-gray-500 text-sm md:text-lg">{r.votes.toLocaleString()} คะแนน</p>
+                        </div>
+                        <div
+                          className={`w-full ${podiumColors[col]} rounded-t-xl flex items-start justify-center pt-3 border-2 border-b-0 ${podiumBorders[col]} mt-2`}
+                          style={{ height: podiumHeights[col], transformOrigin: 'bottom', animation: `podium-rise 0.8s ${rank * 0.3}s ease-out both` }}
+                        >
+                          <span className="text-4xl md:text-6xl">{medals[col]}</span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {rest.length > 0 && (
+                  <div className="w-full max-w-3xl mt-4 flex flex-wrap justify-center gap-6">
+                    {rest.map((r: VoteResult, idx: number) => (
+                      <div
+                        key={r.teacher.id}
+                        className="flex items-center gap-3"
+                        style={{ animation: `fade-up 0.5s ${1 + idx * 0.15}s ease-out both` }}
+                      >
+                        <span className="text-2xl font-bold text-gray-400">{idx + 4}.</span>
+                        {r.teacher.image ? (
+                          <img src={r.teacher.image} alt={r.teacher.name} className="w-12 h-12 rounded-full object-cover border-2 border-gray-300" />
+                        ) : (
+                          <div className="w-12 h-12 rounded-full bg-indigo-200 flex items-center justify-center text-lg font-bold border-2 border-gray-300">
+                            {r.teacher.name.charAt(0)}
+                          </div>
+                        )}
+                        <div>
+                          <p className="font-bold text-gray-700">{r.teacher.name}</p>
+                          <p className="text-sm text-gray-500">{r.votes.toLocaleString()} คะแนน</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
-              {r.teacher.image ? (
-                <img
-                  src={r.teacher.image}
-                  alt={r.teacher.name}
-                  className={`w-16 h-16 rounded-full object-cover border-3 ${
-                    idx === 0 ? 'border-yellow-400 w-20 h-20' : idx === 1 ? 'border-gray-400' : idx === 2 ? 'border-orange-400' : 'border-gray-300'
-                  }`}
-                />
-              ) : (
-                <div className={`w-16 h-16 rounded-full bg-indigo-200 flex items-center justify-center text-2xl border-3 ${
-                  idx === 0 ? 'border-yellow-400 w-20 h-20' : 'border-gray-300'
-                }`}>
-                  {r.teacher.name.charAt(0)}
-                </div>
-              )}
-              <div className="flex-1">
-                <div className="flex items-baseline gap-3">
-                  <span className={`text-2xl font-bold text-gray-800 ${idx === 0 ? 'text-3xl text-indigo-700' : ''}`}>
-                    {r.teacher.name}
-                  </span>
-                  <span className="text-xl text-gray-500">
-                    {r.votes.toLocaleString()} คะแนน
-                  </span>
-                </div>
-                <div className="mt-1 h-3 bg-gray-200 rounded-full overflow-hidden">
-                  <div
-                    className={`h-full bg-gradient-to-r ${LANE_COLORS[idx % LANE_COLORS.length]} rounded-full transition-all duration-1000`}
-                    style={{
-                      width: `${results.rankings[0].votes > 0 ? (r.votes / results.rankings[0].votes) * 100 : 0}%`,
-                    }}
-                  />
-                </div>
-              </div>
-            </div>
-          ))
+            );
+          })()
         ) : (
           teachers.map((t: Teacher, idx: number) => {
             const progress = positions.get(t.id) || 0;

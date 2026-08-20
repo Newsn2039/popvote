@@ -60,3 +60,13 @@ body {
 .animate-slide-right {
   animation: slide-right 0.3s ease-out forwards;
 }
+
+@keyframes podium-rise {
+  from { transform: scaleY(0); }
+  to { transform: scaleY(1); }
+}
+
+@keyframes fade-up {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
