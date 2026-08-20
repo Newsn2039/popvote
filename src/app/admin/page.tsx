@@ -200,7 +200,25 @@ export default function AdminPage() {
       <h1 className="text-3xl font-bold text-center mb-2 text-indigo-700">
         PopularVote Admin
       </h1>
-      <p className="text-center text-gray-500 mb-6">จัดการการโหวตประกวดครู</p>
+      <p className="text-center text-gray-500 mb-4">จัดการการโหวตประกวดครู</p>
+
+      {/* Shortcut Links */}
+      <div className="flex justify-center gap-3 mb-6">
+        <a
+          href="/dashboard"
+          target="_blank"
+          className="px-4 py-2 bg-indigo-100 hover:bg-indigo-200 text-indigo-700 rounded-lg font-medium transition flex items-center gap-2 border border-indigo-200"
+        >
+          <span>📊</span> แดชบอร์ด
+        </a>
+        <a
+          href="/"
+          target="_blank"
+          className="px-4 py-2 bg-indigo-100 hover:bg-indigo-200 text-indigo-700 rounded-lg font-medium transition flex items-center gap-2 border border-indigo-200"
+        >
+          <span>📱</span> QR Code
+        </a>
+      </div>
 
       {/* Status Bar */}
       <div className="bg-white rounded-xl p-4 mb-6 flex flex-wrap gap-4 items-center justify-between shadow-md">

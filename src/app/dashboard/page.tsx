@@ -5,42 +5,42 @@ import { getSocket } from '@/lib/socket';
 import { GameState, Teacher, RaceUpdate, FinalResults, VoteResult } from '@/lib/types';
 
 const LANE_COLORS = [
-  'from-red-400 to-red-600',
+  'from-orange-400 to-orange-600',
   'from-blue-400 to-blue-600',
   'from-green-400 to-green-600',
   'from-yellow-400 to-yellow-600',
   'from-purple-400 to-purple-600',
   'from-pink-400 to-pink-600',
   'from-cyan-400 to-cyan-600',
-  'from-orange-400 to-orange-600',
   'from-teal-400 to-teal-600',
   'from-indigo-400 to-indigo-600',
+  'from-rose-400 to-rose-600',
 ];
 
 const LANE_FILL = [
-  'bg-red-500',
+  'bg-orange-500',
   'bg-blue-500',
   'bg-green-500',
   'bg-yellow-500',
   'bg-purple-500',
   'bg-pink-500',
   'bg-cyan-500',
-  'bg-orange-500',
   'bg-teal-500',
   'bg-indigo-500',
+  'bg-rose-500',
 ];
 
 const LANE_BG = [
-  'bg-red-100',
+  'bg-orange-100',
   'bg-blue-100',
   'bg-green-100',
   'bg-yellow-100',
   'bg-purple-100',
   'bg-pink-100',
   'bg-cyan-100',
-  'bg-orange-100',
   'bg-teal-100',
   'bg-indigo-100',
+  'bg-rose-100',
 ];
 
 export default function DashboardPage() {
